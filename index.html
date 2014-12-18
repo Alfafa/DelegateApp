@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+       <meta charset="UTF-8">
+      <link   rel="stylesheet" type="text/css" href='jquery.mobile-1.4.4.min.css'/>
+      <script src="jquery-1.11.1.min.js"></script>
+      <script src="jquery.mobile-1.4.4.min.js"></script>
+      <script src="Barcode.js" type="text/javascript"></script>
+      <script src="phonegap.js"></script>
+      
+
+<script>
+
+
+function syncAjax(m){
+      console.log(m);
+        var obj=$.ajax(
+          {url:m,
+           async:false
+           }
+        );
+        console.log(obj.responseText);
+        return $.parseJSON(obj.responseText);
+        
+      } 
+
+
+
+function validateFormOnSubmit(theForm) {
+var reason = "";
+
+ reason += validateUsername(theForm.username);
+  //reason += validatePassword(theForm.pwd);
+ reason += validateEmail(theForm.email);
+  reason += validatePhone(theForm.phone);
+  reason += validateEmpty(theForm.org);
+  
+      
+  if (reason != "") {
+    alert("Some fields need correction:\n" + reason);
+    return false;
+  }
+
+  return true;
+}
+
+function validateEmpty(fld) {
+    var error = "";
+ 
+    if (fld.value.length == 0) {
+        fld.style.background = 'Red'; 
+        error = "The required field has not been filled in.\n"
+    } else {
+        fld.style.background = 'White';
+    }
+    return error;  
+}
+
+function validatePhone(fld) {
+    var error = "";
+    var stripped = fld.value.replace(/[\(\)\.\-\ ]/g, '');    
+
+   if (fld.value == "") {
+        error = "You didn't enter a phone number.\n";
+        fld.style.background = 'Red';
+    } else if (isNaN(parseInt(stripped))) {
+        error = "The phone number contains illegal characters.\n";
+        fld.style.background = 'Red';
+    } else if (!(stripped.length == 10)) {
+        error = "The phone number is the wrong length. Make sure you included an area code.\n";
+        fld.style.background = 'Red';
+    }
+    return error;
+}
+
+function trim(s)
+{
+  return s.replace(/^\s+|\s+$/, '');
+}
+
+function validateEmail(fld) {
+    var error="";
+    var tfld = trim(fld.value);                        // value of field with whitespace trimmed off
+    var emailFilter = /^[^@]+@[^@.]+\.[^@]*\w\w$/ ;
+    var illegalChars= /[\(\)\<\>\,\;\:\\\"\[\]]/ ;
+   
+    if (fld.value == "") {
+        fld.style.background = 'Red';
+        error = "You didn't enter an email address.\n";
+    } else if (!emailFilter.test(tfld)) {              //test email for illegal characters
+        fld.style.background = 'Red';
+        error = "Please enter a valid email address.\n";
+    } else if (fld.value.match(illegalChars)) {
+        fld.style.background = 'Red';
+        error = "The email address contains illegal characters.\n";
+    } else {
+        fld.style.background = 'White';
+    }
+    return error;
+}
+
+function validateUsername(fld) {
+    var error = "";
+ 
+    if (fld.value == "") {
+        fld.style.background = 'Red'; 
+        error = "You didn't enter a name.\n";
+    
+    } else {
+        fld.style.background = 'White';
+    }
+    return error;
+}
+
+function saved(){
+  alert("successfully saved");
+}
+function writeBC(s)
+{
+    var bc = new AtalasoftBarcode39(s);
+    document.getElementById('bcArea').innerHTML = bc.getBarcode(50, 2, 8);
+}
+
+
+function direct(){
+  window.location.href='userD.html';
+}
+
+  $(document).ready(function(){
+
+
+         $("#submit").click(function(){
+
+          var name = document.getElementById('nm').value;
+          
+          var em = document.getElementById('em').value;
+          var pn = document.getElementById('pn').value;
+         // var lc = $("#datepicker").datepicker('getDate');
+          var org = document.getElementById('og').value;
+          
+          
+
+        var u= "http://50.63.128.135/~csashesi/class2015/alfred-gaglo/delegate_Fxn.php?cmd=1&fn="+name+"&em="+em+"&p="+pn+"&org="+org;
+         return syncAjax(u);
+        });
+
+          });
+
+</script>
+
+     
+  </head>
+
+
+
+
+
+
+<body>
+ 
+  <div data-role="page" id="pageone" data-theme="b">
+  <div data-role="header"><h1>REGISTRATION FORM</h1>
+
+
+
+
+  <div data-role="navbar">
+    <ul>
+       <li><a href="#"  data-icon="home" class="ui-btn-active ui-state-persist" data-iconpos="notext">Home</a></li>
+       
+       <li onclick='direct()'><a href="userD.html"data-transition="slide" data-icon="grid"-->User Details</a></li>
+       
+       
+
+    </ul>
+        </div>
+    </div>
+
+
+
+
+
+            <br></br>
+   <br></br>
+   <br></br>
+   <br></br>
+   
+        <div data-role="content">
+        <div data-role="content">
+            <form id="newBookForm" onsubmit="return validateFormOnSubmit(this)"method="POST">
+                <div data-role="fieldcontain">
+                    <label for="username"><strong>Name:</strong></label>
+                    <input type="text" name="username" id="nm" value=""  /><br></br>
+                    <label for="email"><strong>Email:</strong></label>
+                   <input type="text" id="em" name="email"  value="" /><br></br>
+                    <label for="phone"><strong>Phone N0:</strong></label>
+                   <input type="text" name="phone" id="pn" value=""/><br></br>
+                   <label for="org"><strong>Organization:</strong></label>
+                   <input type="text" name="org" id="og" value=""/><br></br>
+
+                   <br></br>
+                   <br></br>
+                   <br></br>
+
+                   <div align="center">
+
+                    <fieldset class="ui-grid-a" >
+                        <div class="ui-block-a" align="center"><a href="#" id="cancel" data-role="button">Cancel</a></div>
+                        <div class="ui-block-b" align="center"><button data-theme="b" id="submit" type="submit" >Save</button></div>
+                    </fieldset>
+                  </div>
+
+                    </div>
+
+                    
+        
+           </form>
+            
+
+           
+
+
+
+     
+
+   <br></br>
+   <br></br>
+   <br></br>
+   <br></br>
+   
+
+
+
+                 <div data-role="footer">
+                    <div  align="center">
+                      <h3> Developed By ALFRED KOFI GAGLO <a href="tel:+233279696540">CALL US</a></h3>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
+
+
+
+
+
+
+</html>
